@@ -19,8 +19,8 @@
   },
   "scripts": {
     "build": "NODE_ENV=production npx webpack",
-    "size:gzip": "gzip -c dist/*.js | wc -c",
-    "size:full": "cat dist/*.js | wc -c",
-    "size": "npm run build && npm run size:full && npm run size:gzip"
+    "size:js": "cat dist/*.js | wc -c && gzip -c dist/*.js | wc -c",
+    "size:inline": "cat dist/inline.html | wc -c && gzip -c dist/inline.html | wc -c",
+    "size": "npm run build && npm run size:js && npm run size:inline"
   }
 }
