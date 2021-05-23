@@ -3,17 +3,23 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3"
+  },
   "devDependencies": {
+    "css-loader": "^5.2.5",
     "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^1.6.0",
     "webpack": "^5.37.1",
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "build": "NODE_ENV=production npx webpack",
+    "build": "rm -rf dist && NODE_ENV=production npx webpack",
+    "dev": "NODE_ENV=development npx webpack serve",
     "size:js": "cat dist/*.js | wc -c && gzip -c dist/*.js | wc -c",
     "size:inline": "cat dist/inline.html | wc -c && gzip -c dist/inline.html | wc -c",
-    "size": "npm run build && npm run size:js && npm run size:inline"
+    "size:font": "cat dist/*.woff2 dist/font.css | wc -c && cat dist/*.woff2 dist/font.css | gzip -c | wc -c",
+    "size": "npm run build && npm run size:font && npm run size:js && npm run size:inline"
   }
 }
