@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     'svg-js': path.join(__dirname, 'src', 'svg-js.js'),
     'font': path.join(__dirname, 'src', 'font.css'),
+    'unfont': path.join(__dirname, 'src', 'unfont.css'),
   },
   module: {
     rules: [
@@ -24,16 +25,25 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin(),
+    // SVG + JS core
     new HtmlWebpackPlugin({
       template: 'src/index.html',
       filename: 'svg-js.html',
       chunks: ['svg-js'],
     }),
+    // Classic font
     new HtmlWebpackPlugin({
       template: 'src/index.html',
       filename: 'font.html',
       chunks: ['font'],
     }),
+    // Unfont
+    new HtmlWebpackPlugin({
+      filename: 'unfont.html',
+      template: 'src/unfont.html',
+      chunks: ['unfont'],
+    }),
+    // Unfont inlineCss
     new HtmlWebpackPlugin({
       filename: 'inline.html',
       template: 'src/inline.html',

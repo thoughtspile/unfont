@@ -19,7 +19,8 @@
     "dev": "NODE_ENV=development npx webpack serve",
     "size:js": "cat dist/*.js | wc -c && gzip -c dist/*.js | wc -c",
     "size:inline": "cat dist/inline.html | wc -c && gzip -c dist/inline.html | wc -c",
+    "size:unfont": "cat dist/unfont.{html,css} | wc -c && gzip -c dist/unfont.{html,css} | wc -c",
     "size:font": "cat dist/*.woff2 dist/font.css | wc -c && cat dist/*.woff2 dist/font.css | gzip -c | wc -c",
-    "size": "npm run build && npm run size:font && npm run size:js && npm run size:inline"
+    "size": "npm run build && npm run size:font && npm run size:js && npm run size:unfont && npm run size:inline"
   }
 }
