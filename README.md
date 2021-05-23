@@ -1,10 +1,17 @@
 # unfont
 
-Embed font-awesome icons into HTML with inline SVG. Zero runtime JS needed, icons displayed instantly.
+Embed font-awesome icons into HTML with inline SVG. Zero runtime JS needed, no webpack, icons displayed instantly.
 
 Font awesome now has 1600+ icons in the free pack, pushing the bundle to ~200K — it's a lot of code to only use a few icons. It also takes a while to load, and the icons are not rendered while it's loading. Font awesome's [SVG + JS core](https://fontawesome.com/how-to-use/on-the-web/advanced/svg-javascript-core) is a JS runtime that dynamically replaces `<i>` with inline SVG. Smart, but extra 40K (13K gzip) of JS is not always welcome, and still leaves your users with missing icons during script load.
 
-As a lightweight alternative, I made this package that renders font awesome icons into inline SVG. It comes with the standard tradeoffs of inline SVG (no caching), but works well for static HTML websites with, and is a perfect fit fort critical content. Works with any JS-based templates.
+As a lightweight alternative, I made this package that renders font awesome icons into inline SVG. It comes with the standard tradeoffs of inline SVG (no caching), but works well for static HTML websites with, and is a perfect fit fort critical content. Works with any JS-based templates. Other perks include:
+
+- Up to 10x smaller than SVG + JS runtime
+- No JS needed
+- Every HTML page loads just the icons it needs
+- Streaming HTML support
+- Inline styles option for even smaller bundles
+- No webpack needed
 
 ## Basic usage
 
@@ -59,7 +66,9 @@ fa('fas fa-camera', {
 // <svg style="color: red">
 ```
 
-__Note__ that dynamic node SSR (express & co) should work out of the box, but make sure to run your own performance / load tesing and cache as needed, since it's not a primary use case and rendering may be expensive.
+__Dynamic node SSR__ (express & co) should work out of the box, but make sure to run your own performance / load tesing and cache as needed, since it's not a primary use case and rendering may be expensive.
+
+__Client-side use__ makes no sense. If you really have to, try rendering icons for dynamic display into a hidden container and using their innerHTML. Never import unfont js into your client bundle.
 
 ## Inline styles mode
 
@@ -70,7 +79,7 @@ fa('fas fa-camera fa-2x', { inlineCss: true })
 // <svg style="display: inline-block;font-size: 2em;height: 1em;overflow: visible;vertical-align: -0.125em;width: 1em;">
 ```
 
-This works by statically evaluating font-awesome styles for the given class and should support all `fa-*` utility classes and `styles` options. The downside is that you can only override the styles with `!important` or more inline `styles`, and might break some styling.
+This works by statically evaluating font-awesome styles for the given class and should support all `fa-*` utility classes and respect the `styles` option. The downside is that you can only override the styles with `!important` or more inline `styles`, so existing styling might break.
 
 To use `fa-spin` or `fa-pulse`, include `unfont/css/faSpin.css` for the `@keyframes`. These styles can also be inlined into a `<style>` tag using a string exported from `require('unfont').faSpinCss`. It's a tiny CSS of 376 (120 gzip) bytes.
 
@@ -89,18 +98,18 @@ A [benchmark](./benchmark) with 10 icons produces the following bundles:
 - Default `unfont` bundle is 3.5 times smaller than SVG + JS core version. No matter how many icons you have, you get rid of the 12.5K gzip JS runtime.
 - Comparison with the font version is not even fair (50x difference).
 - `inlineCss` version is another 1.5 times smaller than the default, or only 20% of SVG + JS core.
-- Unfont displays the icons instantly, while both
+- Unfont displays the icons instantly, while both fa versions have a gap when the icons are missing.
 - Both `unfont` setups generate 2.5K extra HTML, which is fine.
 
 In a Slow 3G + 6x CPU Slowdown emulation without cache, icons are displayed @ 11s for font, 5s SVG + JS core, 4s unfont base, 2s unfont inlineCss. `unfont` only shows the page once the icons are ready, so no FOUC.
 
 ## Why not...
 
-- `<img src="...">` / `background-image: url(...)` — generate a request per icon, FOUC while loading, difficult to style.
-- __CSS data-URI__ — difficult to style.
-- __Directly import FA SVG__ — can not add attributes and classes. Also, importing SVG from dynamic path in node is tricky.
-- __SVG sprite in HTML__ — reduces raw HTML size, gzip already handles SVG duplication well. I have not seen a significant improvement in FCP / FMP, and. Also, harder to manage and prevents streaming HTML.
-- __Remote SVG sprite__ — sounds like a decent option
+- `<img src="...">` / `background-image: url(...)` generate a request per icon, have FOUC while loading, and are difficult to style.
+- __CSS data-URI__ is difficult to style, which is a pity. Also, interpolating JS calls into CSS is tricky.
+- __Directly imported FA SVG__ can not add attributes and classes. Also, importing SVG from dynamic path in node is tricky.
+- __SVG sprite in HTML__ reduces raw HTML size, bu gzip already handles SVG duplication well. I have not seen a significant change in FCP / FMP when applying this technique. Also, harder to manage, and prevents streaming HTML in dynamic SSR.
+- __Remote SVG sprite__ sounds like a decent option, but I need too investigate further regarding FOUC & actual performance.
 
 ---
 
