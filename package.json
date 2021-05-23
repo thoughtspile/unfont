@@ -10,5 +10,8 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "css": "^3.0.0",
     "specificity": "^0.4.1"
+  },
+  "scripts": {
+    "prepare": "node tools/prebuild-css.js"
   }
 }
