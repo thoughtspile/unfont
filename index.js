@@ -1,26 +1,39 @@
-// as per https://fontawesome.com/how-to-use/on-the-web/advanced/svg-javascript-core
-const specificitySorter = require('specificity').compare;
-const { icon, dom, toHtml } = require('@fortawesome/fontawesome-svg-core');
+const { icon, toHtml } = require('@fortawesome/fontawesome-svg-core');
 const { fas } = require('@fortawesome/free-solid-svg-icons');
 const { far } = require('@fortawesome/free-regular-svg-icons');
 const { fab } = require('@fortawesome/free-brands-svg-icons');
-const { parse, stringify } = require('css');
+const { parseFaCss, joinStyles, matchStyles, parseStyles } = require('./lib/styles');
 
 const packs = { fas, far, fab };
-const faCss = parseCss();
+const faCss = parseFaCss();
 
-// const {
-//   transform = meaninglessTransform,
-//   symbol = false,
-//   mask = null,
-//   maskId = null,
-//   title = null,
-//   titleId = null,
-//   classes = [],
-//   attributes = {},
-//   styles = {}
-// }
+/**
+ * @typedef {Object} UnfontFaParams
+ *
+ * @property {boolean} [inlineCss]
+ * @property {Object} [transform]
+ * @property {Object} [attributes]
+ * @property {Object} [styles]
+ */
 
+/**
+ * Render font-awesome icon to inline SVG
+ *
+ * @param {string} className
+ * @param {UnfontFaParams} [params]
+ * @returns {string} SVG with className and extra attributes / styles from params
+ *
+ *
+ * @example
+ * fa('fab fa-twitter')
+ * @example <caption>With extra styles, classes and attributes</caption>
+ * fa('fas fa-user-astronaut fa-2x', {
+ *     styles: { color: 'red' },
+ *     attributes: { id: 'icon' }
+ * })
+ * @example <caption>With inline fa CSS</caption>
+ * fa('fas fa-user-astronaut fa-2x', { inlineCss: true })
+ */
 function fa(className, params = {}) {
   const classList = className.split(/ +/g);
   const classSet = new Set(classList);
@@ -40,10 +53,15 @@ function fa(className, params = {}) {
   if (icons.length > 1) {
     throw new Error(`Expected one icon name in "${className}", got: ${icons.map(i => i.iconName).join(', ')}`);
   }
+
   const iconApi = icon(icons[0], { ...params, classes: classList });
+  if (!params.inlineCss) {
+    return iconApi.html[0];
+  }
+
   const iconNode = iconApi.abstract[0];
   const inlineStyles = joinStyles({
-    ...matchStyles(iconNode.attributes.class),
+    ...matchStyles(iconNode.attributes.class, faCss.rules),
     ...parseStyles(iconNode.attributes.style),
   });
   return toHtml({
@@ -55,65 +73,5 @@ function fa(className, params = {}) {
   });
 }
 
-function parseCss() {
-  const blocks = parse(dom.css()).stylesheet.rules;
-  const rules = blocks.filter(r => r.type === 'rule');
-
-  const animationCss = stringify({
-    type: 'stylesheet',
-    stylesheet: {
-      rules: blocks.filter(r => r.type === 'keyframes'),
-    },
-  });
-
-  return { animationCss, rules };
-}
-
-function matchStyles(className, rules = faCss.rules) {
-  const classSet = new Set(className.split(/ +/g));
-  const applyRules = [];
-  rules.forEach(rule => {
-    const matches = rule.selectors.filter(s => {
-      const noRoot = s.replace(/:root +/, '');
-      // no descendant selectors
-      if (noRoot.includes(' ')) return false;
-      return noRoot.split('.').filter(Boolean).every(cls => classSet.has(cls));
-    });
-
-    matches.forEach((selector) => {
-      applyRules.push({ selector, declarations: rule.declarations });
-    });
-  });
-  const styles = {};
-  applyRules.sort((r1, r2) => specificitySorter(r1.selector, r2.selector)).forEach((rule) => {
-    rule.declarations.forEach(decl => {
-      styles[decl.property] = decl.value;
-    });
-  });
-  return styles;
-}
-
-function joinStyles(styles) {
-  return Object.keys(styles || {}).reduce(function (acc, styleName) {
-    return acc + "".concat(styleName, ": ").concat(styles[styleName], ";");
-  }, '');
-}
-
-function parseStyles(style) {
-  if (!style) return {};
-  return style.split(';').reduce(function (acc, style) {
-    var styles = style.split(':');
-    var prop = styles[0];
-    var value = styles.slice(1);
-
-    if (prop && value.length > 0) {
-      acc[prop] = value.join(':').trim();
-    }
-
-    return acc;
-  }, {});
-}
-
-// console.log(fa('fab fa-twitter', { styles: { color: 'red' } }));
-
 module.exports.fa = fa;
+module.exports.faSpinCss = faCss.animationCss;
