@@ -8,6 +8,8 @@ As a lightweight alternative, I made this package that renders font awesome icon
 
 ## Basic usage
 
+Play around with the icon generator in the (sandbox)[https://codesandbox.io/s/unfont-demo-jf0y2?file=/src/index.js], but don't use `unfont` client-side.
+
 Install:
 
 ```sh
