@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
+  <% const { fa, faSpinCss } = require('../../') %>
   <head>
     <meta charset="utf-8"/>
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <style<%= '>' + faSpinCss %></style>
   </head>
   <body>
-      <%= require('../../').fa("fas fa-user-astronaut", { inlineCss: true }) %>
-      <%= require('../../').fa("fas fa-arrow-circle-right", { inlineCss: true }) %>
-      <%= require('../../').fa("fas fa-baby-carriage", { inlineCss: true }) %>
-      <%= require('../../').fa("fas fa-bug", { inlineCss: true }) %>
-      <%= require('../../').fa("fab fa-telegram", { inlineCss: true }) %>
-      <%= require('../../').fa("fab fa-twitter", { inlineCss: true }) %>
-      <%= require('../../').fa("fab fa-facebook", { inlineCss: true }) %>
-      <%= require('../../').fa("far fa-address-book", { inlineCss: true }) %>
-      <%= require('../../').fa("far fa-calendar", { inlineCss: true }) %>
-      <%= require('../../').fa("far fa-bell", { inlineCss: true }) %>
+      <%= fa("fas fa-user-astronaut", { inlineCss: true }) %>
+      <%= fa("fas fa-arrow-circle-right", { inlineCss: true }) %>
+      <%= fa("fas fa-baby-carriage", { inlineCss: true }) %>
+      <%= fa("fas fa-bug", { inlineCss: true }) %>
+      <%= fa("fab fa-telegram", { inlineCss: true }) %>
+      <%= fa("fab fa-twitter", { inlineCss: true }) %>
+      <%= fa("fab fa-facebook", { inlineCss: true }) %>
+      <%= fa("far fa-address-book", { inlineCss: true }) %>
+      <%= fa("far fa-calendar", { inlineCss: true }) %>
+      <%= fa("far fa-bell", { inlineCss: true }) %>
   </body>
 </html>

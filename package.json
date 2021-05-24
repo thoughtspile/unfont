@@ -1,8 +1,20 @@
 {
   "name": "unfont",
+  "description": "Render Font Awesome to static HTML. No JS runtime, no webpack.",
   "version": "0.1.0",
   "main": "index.js",
+  "typings": "index.d.ts",
   "license": "MIT",
+  "repository": "thoughtspile/unfont",
+  "author": "Vladimir Klepov <v.klepov@gmail.com>",
+  "keywords": [
+    "fontawesome",
+    "svg",
+    "icon",
+    "performance",
+    "template",
+    "ejs"
+  ],
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
